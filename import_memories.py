@@ -106,44 +106,44 @@ def import_file(filepath: Path) -> int:
 def main():
     """Main import function."""
     print("=" * 60)
-    print("Memory System - Import existing memory files")
+    print("赛希记忆系统 - 导入现有记忆文件")
     print("=" * 60)
 
     if not MEMORY_DIR.exists():
         print(f"Error: Memory directory not found: {MEMORY_DIR}")
-        print("Please update MEMORY_DIR in this script to your memory files location.")
+        print("请更新 MEMORY_DIR 为你的记忆文件路径。")
         sys.exit(1)
 
     # Initialize ChromaDB
-    print("\n[1/3] Initializing ChromaDB...")
+    print("\n[1/3] 初始化 ChromaDB...")
     _ = chroma_client.collection
-    print("  ChromaDB initialized")
+    print("  ChromaDB 初始化完成")
 
     # Find files to import
-    print(f"\n[2/3] Scanning memory files: {MEMORY_DIR}")
+    print(f"\n[2/3] 扫描记忆文件: {MEMORY_DIR}")
     files = list(MEMORY_DIR.glob("*.md"))
     if not files:
-        print("  No .md files found")
+        print("  没有找到 .md 文件")
         sys.exit(0)
 
     excluded = [f for f in files if should_exclude_file(f.name)]
     to_import = [f for f in files if not should_exclude_file(f.name)]
 
-    print(f"  Found {len(files)} .md files")
+    print(f"  找到 {len(files)} 个 .md 文件")
     if excluded:
-        print(f"  Excluding {len(excluded)} sensitive files: {[f.name for f in excluded]}")
-    print(f"  Will import {len(to_import)} files")
+        print(f"  排除 {len(excluded)} 个敏感文件: {[f.name for f in excluded]}")
+    print(f"  将导入 {len(to_import)} 个文件")
 
     # Import files
-    print("\n[3/3] Importing memories...")
+    print("\n[3/3] 导入记忆...")
     total_imported = 0
     for filepath in to_import:
-        print(f"  Importing: {filepath.name}...", end=" ", flush=True)
+        print(f"  正在导入: {filepath.name}...", end=" ", flush=True)
         count = import_file(filepath)
-        print(f"Imported {count} memories")
+        print(f"导入 {count} 条记忆")
         total_imported += count
 
-    print(f"\nDone! Imported {total_imported} memories to ChromaDB.")
+    print(f"\n完成！共导入 {total_imported} 条记忆到 ChromaDB。")
     print("=" * 60)
 
 

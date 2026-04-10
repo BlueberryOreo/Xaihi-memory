@@ -98,9 +98,9 @@ def format_conversation_for_summary(entries: list[dict]) -> str:
         user = entry.get("user", "").replace("\n", " ").strip()
         assistant = entry.get("assistant", "").replace("\n", " ").strip()
         if user:
-            lines.append(f"[User | {ts}] - {user}")
+            lines.append(f"[管理员 | {ts}] - {user}")
         if assistant:
-            lines.append(f"[Assistant | {ts}] - {assistant}")
+            lines.append(f"[赛希 | {ts}] - {assistant}")
     return "\n".join(lines)
 
 
