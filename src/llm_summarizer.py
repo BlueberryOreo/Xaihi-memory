@@ -74,8 +74,8 @@ class LLMSummarizer:
     def summarize(self, conversation: str) -> dict[str, Any]:
         """Summarize a conversation and return structured memory."""
         user_prompt = f"""# Conversation Format
-[User | timestamp] - User message
-[Assistant | timestamp] - Assistant response
+[管理员 | timestamp] - 管理员消息
+[赛希 | timestamp] - 赛希回复
 
 # Conversation Content
 {conversation}
