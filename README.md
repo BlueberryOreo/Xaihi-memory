@@ -62,6 +62,11 @@ Xaihi-memory/
 
 - [LivingMemory](https://github.com/lxfight-s-Astrbot-Plugins/astrbot_plugin_livingmemory) - An intelligent long-term memory plugin for AstrBot with hybrid retrieval and automatic summarization
 
+## TODO
+
+- [ ] Automatic forgetting strategy
+- [ ] Importance decay mechanism
+
 ## Setup
 
 ### 1. Install Dependencies
@@ -166,12 +171,12 @@ python list_memory.py
 ## API Configuration (You can replace these with your own API)
 
 ### Embedding
-- **Model**: text-embedding-v4 (via DashScope)
+- **Model**: text-embedding-v4
 - **Dimension**: 1024
 - **Endpoint**: Configurable via `embedding.base_url`
 
 ### LLM (for summarization)
-- **Model**: qwen3.5 (via custom endpoint)
+- **Model**: qwen3.5
 - **Temperature**: 0.3
 - **Timeout**: 120s
 

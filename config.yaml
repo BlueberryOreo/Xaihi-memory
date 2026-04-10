@@ -1,0 +1,41 @@
+chroma:
+  persist_dir: "~/.claude/memory/chroma_db"
+  collection: "memories"
+
+embedding:
+  provider: "openai"
+  model: "text-embedding-v4"
+  api_key_env: "OPENAI_API_KEY"
+  # api_key: Read from bashrc or set directly
+  dimension: 1024
+  # base_url: Read from bashrc or set directly
+
+llm:
+  provider: "qwen"
+  model: "qwen3.5-397b-a17b"
+  api_key_env: "DASHSCOPE_API_KEY"
+  # api_key: Read from bashrc or set directly
+  # base_url: Read from bashrc or set directly
+  temperature: 0.3
+
+memory:
+  top_k: 5
+  min_importance: 0.3
+  summary_trigger_rounds: 10
+  ttl_days: 365
+  buffer_file: "~/.claude/memory/conversation_buffer.jsonl"
+  counter_file: "~/.claude/memory/counter.json"
+  temp_dir: "~/.claude/memory"
+
+recall:
+  max_context_length: 2000
+  format_template: |
+    [相关记忆]
+    {memories}
+
+    ---
+
+summary:
+  max_input_length: 8000
+  max_topics: 5
+  max_key_facts: 5
