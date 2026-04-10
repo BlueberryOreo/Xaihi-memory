@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Memory system local data
+~/.claude/memory/
+
+# Logs
+*.log
+
+# API keys - do NOT commit this file with real keys
+# Copy config.yaml.example to config.yaml and fill in your own keys
+config.yaml
+
+# Custom prompt - write your own prompts/summarize_conversation.txt
+# See prompts/README.md for instructions
+prompts/summarize_conversation.txt
