@@ -81,9 +81,9 @@ Edit `config.yaml` directly, or add to `~/.bashrc`:
 
 ```bash
 export DASHSCOPE_API_KEY="your-key"
-export DASHSCOPE_BASE_URL="https://new-api.publicvm.com/v1"
+export DASHSCOPE_BASE_URL="your-base-url"
 export OPENAI_API_KEY="your-key"
-export OPENAI_BASE_URL="https://dashscope.aliyuncs.com/compatible-mode/v1"
+export OPENAI_BASE_URL="your-base-url"
 ```
 
 Config loading priority:
