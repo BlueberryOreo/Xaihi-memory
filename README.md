@@ -1,5 +1,14 @@
 # Xaihi-memory
 
+[[中文]](./README_ZH.md)
+
+<div align="center">
+    <img src="https://endfield.wiki.gg/images/Snapshot_Xaihi_1.png?9fc2c7" alt="Xaihi" style="width:50%;"/>
+    <div>
+        <i> This is Xaihi. She's cute. </i>
+    </div>
+</div>
+
 A personal memory system for Claude Code, designed to maintain long-term conversational context across sessions.
 
 ## Overview
@@ -34,8 +43,7 @@ Xaihi-memory stores conversation summaries in a vector database (ChromaDB) and r
 - **Vector-based memory retrieval**: Uses text-embedding-v4 for semantic search
 - **Automatic summarization**: Conversation buffer is summarized and stored every 10 rounds
 - **Hook integration**: Works with Claude Code's UserPromptSubmit, Stop, and SessionEnd hooks
-- **Privacy-aware**: Sensitive memories can be excluded from vector storage
-- **Flexible config**: API keys can be loaded from config.yaml or .bashrc
+- **Coming soon...**
 
 ## Project Structure
 
