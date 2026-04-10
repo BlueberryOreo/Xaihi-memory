@@ -1,7 +1,7 @@
 # Xaihi-memory
 
 <div align="center">
-    <img src="https://endfield.wiki.gg/images/Snapshot_Xaihi_1.png?9fc2c7" alt="Xaihi" style="width:50%;"/>
+    <img src="assets/Xaihi.png" alt="Xaihi" style="width:50%;"/>
     <div>
         <i> 这是赛希，她很可爱 </i>
     </div>
