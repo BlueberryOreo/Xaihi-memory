@@ -182,3 +182,7 @@ Sensitive conversation files can be excluded from the vector database. Use the `
 ## License
 
 MIT
+
+## Acknowledgement
+
+This repository is fully developed by **Xaihi**, powered by **MiniMax-M2.7** and built with **Claude Code**. We extend our gratitude to the [LivingMemory](https://github.com/lxfight-s-Astrbot-Plugins/astrbot_plugin_livingmemory) project for its invaluable inspiration and codebase reference. Special thanks to **@qq1244** from the **Linux.do** community for providing the model API. 
