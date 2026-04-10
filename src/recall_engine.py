@@ -1,5 +1,6 @@
 """Recall engine for xaihi memory system."""
 import json
+import os
 import sys
 from datetime import datetime
 from typing import Any
@@ -109,8 +110,12 @@ def recall(query: str) -> str:
 
 if __name__ == "__main__":
     result = recall("")
-    with open("/home/sunjiayang/agent/memory/recall.log", "wt") as f:
-        print(result, file=f)
-        
+
     if result:
         print(result)
+
+    tmp_dir = os.path.expanduser(config.get("memory.temp_dir", "~/.claude/memory"))
+    os.makedirs(tmp_dir, exist_ok=True)
+    with open(os.path.join(tmp_dir, "recall.log"), "wt") as f:
+        print(result, file=f)
+    
