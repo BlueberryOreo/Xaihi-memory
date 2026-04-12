@@ -3,6 +3,7 @@ import json
 import os
 import re
 import time
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -55,7 +56,8 @@ class LLMSummarizer:
             raise ValueError("API key not found in config or environment")
 
         # Load custom prompt from prompts/summarize_conversation.txt if exists
-        self.system_prompt = self._load_custom_prompt()
+        # self.system_prompt = self._load_custom_prompt()
+        self.system_prompt = f"[Current time: {datetime.now().strftime('%Y-%m-$d %H:%M:%S')}]\n" + self._load_custom_prompt()
 
     def _load_custom_prompt(self) -> str:
         """Load custom system prompt from prompts/summarize_conversation.txt.

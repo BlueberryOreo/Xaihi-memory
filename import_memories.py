@@ -22,9 +22,7 @@ EXCLUDE_FILES = {
 
 # Additional sensitive patterns to exclude from content
 EXCLUDE_PATTERNS = [
-    "那些图",
-    "rating:",
-    "NSFW",
+
 ]
 
 

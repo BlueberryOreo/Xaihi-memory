@@ -11,9 +11,9 @@ embedding:
   # base_url: Read from bashrc or set directly
 
 llm:
-  provider: "qwen"
-  model: "qwen3.5-397b-a17b"
-  api_key_env: "DASHSCOPE_API_KEY"
+  provider: "zai"
+  model: "GLM-5-FP8"
+  api_key_env: "OPENAI_API_KEY"
   # api_key: Read from bashrc or set directly
   # base_url: Read from bashrc or set directly
   temperature: 0.3
