@@ -111,6 +111,7 @@ def recall(query: str) -> str:
 if __name__ == "__main__":
     result = recall("")
 
+    print("Current time:", datetime.now().isoformat())
     if result:
         print(result)
 

@@ -169,7 +169,8 @@ python import_memories.py
 
 ```bash
 cd ~/agent/memory
-python list_memory.py
+python list_memory.py            # 默认显示最近 10 条
+python list_memory.py -n 20      # 显示最近 20 条
 ```
 
 ## 模型设置（可替换为其他模型）

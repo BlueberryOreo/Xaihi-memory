@@ -173,7 +173,8 @@ python import_memories.py
 
 ```bash
 cd ~/agent/memory
-python list_memory.py
+python list_memory.py            # default: last 10 memories
+python list_memory.py -n 20      # last 20 memories
 ```
 
 ## API Configuration (You can replace these with your own API)
