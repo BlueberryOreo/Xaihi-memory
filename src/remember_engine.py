@@ -171,6 +171,8 @@ def summarize_and_store() -> bool:
         return True
 
     except Exception as e:
+        with open("remember_engine_errors.log", "a") as log_file:
+            log_file.write(f"{datetime.now().isoformat()} - Error during summarization: {e}\n")
         print(f"Error during summarization: {e}", file=sys.stderr)
         return False
 

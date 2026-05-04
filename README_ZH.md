@@ -189,6 +189,16 @@ python list_memory.py -n 20      # 显示最近 20 条
 
 隐私记忆文件可设置 `config.yaml` 中的 `exclude_paths` 以排除导入向量数据库。
 
+## SessionStart Hook
+
+系统在新会话首次启动时通过 `SessionStart` hook（仅 `matcher: "startup"`）运行 `session_start_hook.sh`。
+
+该 hook 会执行 `python3 list_memory.py -n 20`，将最近记忆和固定引导提示写入 `hookSpecificOutput.additionalContext`。它的作用不是替代 `recall.sh` 的按 prompt 检索，而是在用户首条消息很短、很模糊或只是问候时，为模型提供近期时间锚点，减少与最近事件矛盾的开场回复。
+
+这个 hook 不会让 Claude 主动发送第一条消息；它只是在用户首条消息到来前补充上下文。
+
+注入的记忆按时间从早到晚排列（最末尾的一条是最新的）。为避免超过 `additionalContext` 的 10,000 字符上限，脚本会优先保留最新记忆，并从最旧内容开始截断。
+
 ## License
 
 MIT

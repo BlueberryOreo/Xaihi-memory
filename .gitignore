@@ -17,6 +17,7 @@ env/
 *.swo
 
 # Memory system local data
+chroma_db/
 ~/.claude/memory/
 
 # Logs
@@ -29,3 +30,6 @@ env/
 # Custom prompt - write your own prompts/summarize_conversation.txt
 # See prompts/README.md for instructions
 prompts/summarize_conversation.txt
+
+# Local Codex collaboration drafts (contain absolute paths and internal review notes)
+.codex_*.md

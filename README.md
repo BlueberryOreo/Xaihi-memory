@@ -193,6 +193,16 @@ python list_memory.py -n 20      # last 20 memories
 
 Sensitive conversation files can be excluded from the vector database. Use the `exclude_paths` setting in `config.yaml` to add files or directories you want to keep private.
 
+## SessionStart Hook
+
+When a brand-new Claude Code session is launched, the `SessionStart` hook (only `matcher: "startup"`) runs `session_start_hook.sh`.
+
+The hook executes `python3 list_memory.py -n 20`, packages the recent memories together with a fixed guidance prompt, and emits them via `hookSpecificOutput.additionalContext`. This is not a replacement for `recall.sh`'s prompt-based retrieval — its purpose is to give the model a recent time anchor when the user's first message is short, vague, or just a greeting, reducing openings that contradict recent events.
+
+The hook does not cause Claude to send the first message autonomously; it merely supplements context before the user's first input arrives.
+
+Injected memories are ordered chronologically (oldest first, newest last). To stay within the 10,000-character `additionalContext` cap, the script keeps the most recent memories first and trims older ones when needed.
+
 ## License
 
 MIT
