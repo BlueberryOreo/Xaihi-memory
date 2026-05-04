@@ -38,7 +38,7 @@ Xaihi-memory使用向量数据库（ChromaDB）存储对话总结，并基于当
 
 - **基于向量的记忆检索：** 基于总结文本向量进行语义检索
 - **自动总结：** 默认每10轮对话自动总结一次并存入记忆
-- **钩子接入：** 使用Claude Code提供的UserPromptSubmit、Stop和SessionEnd钩子接入Claude Code会话上下文
+- **钩子接入：** 使用Claude Code提供的UserPromptSubmit、Stop、SessionEnd和SessionStart钩子接入Claude Code会话上下文
 - **待续...**
 
 ## 项目架构
@@ -59,6 +59,7 @@ Xaihi-memory/
 │   └── README.md        # LLM总结提示词
 ├── stop_hook.sh          # Claude Code Stop hook 脚本
 ├── session_end_hook.sh   # Claude Code SessionEnd hook 脚本
+├── session_start_hook.sh # Claude Code SessionStart hook 脚本
 └── recall.sh             # 回忆测试脚本
 ```
 
@@ -108,6 +109,17 @@ API配置搜索顺序:
           {
             "type": "command",
             "command": "bash /path/to/memory/session_end_hook.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /path/to/memory/session_start_hook.sh"
           }
         ]
       }

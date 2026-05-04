@@ -42,7 +42,7 @@ Xaihi-memory stores conversation summaries in a vector database (ChromaDB) and r
 
 - **Vector-based memory retrieval**: Uses text-embedding-v4 for semantic search
 - **Automatic summarization**: Conversation buffer is summarized and stored every 10 rounds
-- **Hook integration**: Works with Claude Code's UserPromptSubmit, Stop, and SessionEnd hooks
+- **Hook integration**: Works with Claude Code's UserPromptSubmit, Stop, SessionEnd, and SessionStart hooks
 - **Coming soon...**
 
 ## Project Structure
@@ -63,6 +63,7 @@ Xaihi-memory/
 │   └── README.md        # Prompt templates (write your own)
 ├── stop_hook.sh          # Claude Code Stop hook script
 ├── session_end_hook.sh   # Claude Code SessionEnd hook script
+├── session_start_hook.sh # Claude Code SessionStart hook script
 └── recall.sh             # CLI for testing recall
 ```
 
@@ -112,6 +113,17 @@ Add to `~/.claude/settings.json` (see [Hooks Documentation](https://code.claude.
           {
             "type": "command",
             "command": "bash /path/to/memory/session_end_hook.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /path/to/memory/session_start_hook.sh"
           }
         ]
       }
