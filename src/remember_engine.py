@@ -129,9 +129,9 @@ def calc_effective_importance(
 ) -> float:
     """Calculate effective importance using Ebbinghaus forgetting curve.
 
-    adjusted_base = min(1.0, base × (1 + alpha × access_count))
+    adjusted_base = min(1.0, base × (1 + alpha × ln(1 + access_count)))
     effective     = adjusted_base × exp(-days_since / S)
-    S             = s0 × adjusted_base × (1 + alpha × access_count)
+    S             = s0 × adjusted_base
     """
     if now is None:
         now = datetime.now(timezone.utc)
@@ -158,9 +158,9 @@ def calc_effective_importance(
         days_since = 0
 
     base = max(base_importance, 0.01)
-    # access_count can boost the effective base (capped at 1.0)
-    adjusted_base = min(1.0, base * (1.0 + alpha * access_count))
-    S = s0 * adjusted_base * (1.0 + alpha * access_count)
+    # access_count boosts effective base with diminishing returns (log scaling)
+    adjusted_base = min(1.0, base * (1.0 + alpha * math.log(1 + access_count)))
+    S = s0 * adjusted_base
     effective = adjusted_base * math.exp(-days_since / max(S, 0.001))
 
     return round(min(effective, 1.0), 4)
