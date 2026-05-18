@@ -67,7 +67,7 @@ def recall(query: str) -> str:
         recall_cfg = config.get_recall()
         top_k = recall_cfg.get("top_k", 5)
         top_candidates = recall_cfg.get("top_candidates", 20)
-        min_similarity = recall_cfg.get("min_similarity", 0.65)
+        min_recall_score = recall_cfg.get("min_recall_score", 0.61)
         w_similarity = recall_cfg.get("weight_similarity", 0.6)
         w_importance = recall_cfg.get("weight_importance", 0.4)
         max_context_length = recall_cfg.get("max_context_length", 2000)
@@ -80,12 +80,7 @@ def recall(query: str) -> str:
         if not candidates:
             return ""
 
-        # Step 2: Similarity threshold filtering
-        # Quick check: if the best candidate already fails, discard everything
-        if candidates[0]["cosine"] < min_similarity:
-            return ""
-
-        # Step 3: Calculate recall_score and re-rank
+        # Step 2: Calculate recall_score
         from datetime import timezone
         now = datetime.now(timezone.utc)
         for c in candidates:
@@ -100,14 +95,18 @@ def recall(query: str) -> str:
             c["effective_importance"] = eff
             c["recall_score"] = w_similarity * c["cosine"] + w_importance * eff
 
-        # Sort by recall_score descending
+        # Step 3: Sort by recall_score descending
         candidates.sort(key=lambda x: x["recall_score"], reverse=True)
 
-        # Per-memory cosine filter + take top_k
+        # Per-memory recall_score filter + cosine floor + take top_k
         results = []
         for c in candidates:
-            if c["cosine"] < min_similarity:
+            if c["recall_score"] < min_recall_score:
                 break  # Already sorted by recall_score, lower scores will also fail
+            # Also require cosine >= 0.60 to prevent high-importance but semantically
+            # unrelated memories from slipping through (e.g., random greetings)
+            if c["cosine"] < 0.60:
+                continue
             results.append(c)
             if len(results) >= top_k:
                 break
