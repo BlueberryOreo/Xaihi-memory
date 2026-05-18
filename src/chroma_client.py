@@ -67,20 +67,13 @@ class ChromaDBClient:
         self,
         embedding: list[float],
         top_k: int = 5,
-        min_importance: float = 0.3,
         where: dict | None = None,
     ) -> list[dict[str, Any]]:
-        """Search memories by vector similarity."""
-        # Build where filter for importance
-        query_where = where or {}
-        if min_importance > 0:
-            # ChromaDB uses a different filter syntax
-            query_where = {"importance": {"$gte": min_importance}}
-
+        """Search memories by vector cosine similarity."""
         results = self._collection.query(
             query_embeddings=[embedding],
             n_results=top_k,
-            where=query_where if query_where else None,
+            where=where if where else None,
             include=["documents", "metadatas", "distances"],
         )
 
@@ -92,6 +85,7 @@ class ChromaDBClient:
                     "content": results["documents"][0][i],
                     "metadata": results["metadatas"][0][i],
                     "distance": results["distances"][0][i],
+                    "cosine": 1.0 - results["distances"][0][i],
                 })
         return memories
 

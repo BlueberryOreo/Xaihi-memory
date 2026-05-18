@@ -11,24 +11,59 @@ embedding:
   # base_url: Read from bashrc or set directly
 
 llm:
+  # provider: "qwen"
+  # model: "Qwen3.6-35B-A3B-UD-Q8_K_XL.gguf"
   provider: "zai"
-  model: "GLM-5-FP8"
-  api_key_env: "OPENAI_API_KEY"
+  model: "GLM-5.1(nsfw)"
+  # api_key_env: "OPENAI_API_KEY"
   # api_key: Read from bashrc or set directly
   # base_url: Read from bashrc or set directly
+  # base_url: https://127.0.0.1:8082/v1
   temperature: 0.3
 
 memory:
   top_k: 5
-  min_importance: 0.3
   summary_trigger_rounds: 10
   ttl_days: 365
   buffer_file: "~/.claude/memory/conversation_buffer.jsonl"
   counter_file: "~/.claude/memory/counter.json"
   temp_dir: "~/.claude/memory"
 
+# v2: Ebbinghaus decay
+decay:
+  s0: 30                # base half-life in days (for base_importance=1.0, access=0)
+  alpha: 0.05           # access_count reward coefficient
+  # adjusted_base = min(1.0, base × (1 + alpha × ln(1 + access_count)))
+  # effective = adjusted_base × exp(-days_since / S)
+  # S = s0 × adjusted_base
+
+# v2: Tier settlement
+settle:
+  daily_to_monthly:
+    threshold: 0.35           # effective < threshold → candidate
+    min_candidates: 3         # same-month candidates needed
+  monthly_to_yearly:
+    threshold: 0.25
+    min_candidates: 2
+  importance_shield: 0.50     # effective > shield → never settle
+  max_incremental: 3          # max incremental merges before full rebuild
+  max_raw_memories: 10        # max raw memories before full rebuild
+  rpm_limit: 5                # max LLM calls per minute during settlement
+
+# v2: Cold storage
+cold_storage:
+  dir: "~/.claude/memory/cold_storage"
+  daily_pattern: "daily/{date}.jsonl"
+  monthly_pattern: "monthly/{month}.jsonl"
+  index_file: "index.json"
+
 recall:
   max_context_length: 2000
+  top_k: 5                  # final recalled memories count
+  top_candidates: 20        # vector search candidate window
+  min_similarity: 0.65      # minimum cosine similarity threshold
+  weight_similarity: 0.6    # w1: similarity weight in recall_score
+  weight_importance: 0.4    # w2: importance weight in recall_score
   format_template: |
     [相关记忆]
     {memories}

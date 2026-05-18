@@ -1,5 +1,6 @@
 """Recall engine for xaihi memory system."""
 import json
+import math
 import os
 import sys
 from datetime import datetime
@@ -9,10 +10,12 @@ try:
     from .config import config
     from .embedding import get_embedding_client
     from .chroma_client import chroma_client
+    from .remember_engine import calc_effective_importance
 except ImportError:
     from config import config
     from embedding import get_embedding_client
     from chroma_client import chroma_client
+    from remember_engine import calc_effective_importance
 
 
 def format_timestamp(dt: Any) -> str:
@@ -61,29 +64,67 @@ def recall(query: str) -> str:
         query_embedding = get_embedding_client().embed(query)
 
         # Get config
-        memory_cfg = config.get_memory()
         recall_cfg = config.get_recall()
-        top_k = memory_cfg.get("top_k", 5)
-        min_importance = memory_cfg.get("min_importance", 0.3)
+        top_k = recall_cfg.get("top_k", 5)
+        top_candidates = recall_cfg.get("top_candidates", 20)
+        min_similarity = recall_cfg.get("min_similarity", 0.65)
+        w_similarity = recall_cfg.get("weight_similarity", 0.6)
+        w_importance = recall_cfg.get("weight_importance", 0.4)
+        max_context_length = recall_cfg.get("max_context_length", 2000)
 
-        # Search ChromaDB
-        results = chroma_client.search(
-            query_embedding, top_k=top_k, min_importance=min_importance
+        # Step 1: Vector search (ChromaDB)
+        candidates = chroma_client.search(
+            query_embedding, top_k=top_candidates
         )
 
-        if not results:
+        if not candidates:
             return ""
 
-        # v2: update access tracking for hit memories
+        # Step 2: Similarity threshold filtering
+        max_cos = candidates[0]["cosine"]  # Already sorted by chroma
+        if max_cos < min_similarity:
+            return ""  # No memories pass the threshold
+
+        # Step 3: Calculate recall_score and re-rank
+        from datetime import timezone
+        now = datetime.now(timezone.utc)
+        for c in candidates:
+            meta = c.get("metadata", {})
+            base = meta.get("base_importance", 0.5)
+            ac = meta.get("access_count", 0)
+            created_at = meta.get("created_at", "")
+
+            eff = calc_effective_importance(
+                float(base), int(ac), str(created_at), now
+            )
+            c["effective_importance"] = eff
+            c["recall_score"] = w_similarity * c["cosine"] + w_importance * eff
+
+        # Sort by recall_score descending
+        candidates.sort(key=lambda x: x["recall_score"], reverse=True)
+
+        # Take top_k
+        results = candidates[:top_k]
+
+        # Step 4: Update access_count and importance only for passed memories
         for result in results:
             try:
                 meta = result.get("metadata", {})
-                new_access_count = meta.get("access_count", 0) + 1
+                base = meta.get("base_importance", 0.5)
+                ac = meta.get("access_count", 0)
+                created_at = meta.get("created_at", "")
+
+                # Calculate new effective importance
+                eff = calc_effective_importance(
+                    float(base), int(ac), str(created_at), now
+                )
+
                 chroma_client.update_metadata(
                     result["id"],
                     {
-                        "access_count": new_access_count,
+                        "access_count": int(ac) + 1,
                         "last_accessed": datetime.now().isoformat(),
+                        "importance": round(eff, 4),
                     },
                 )
             except Exception:
@@ -103,19 +144,24 @@ def recall(query: str) -> str:
             importance = metadata.get("importance", 0)
             topics = ", ".join(metadata.get("topics", [])[:3])
 
+            w1 = w_similarity
+            w2 = w_importance
+            cos_val = result.get("cosine", 0)
+            eff_val = result.get("effective_importance", 0)
+            score = result.get("recall_score", 0)
+
             line = f"- [{date_str}] {content}"
             if topics:
-                line += f" (主题: {topics})"
-            line += f" (重要性: {importance:.1f})"
+                line += f" (主题：{topics})"
+            line += f" ({w1:.1f}×{cos_val:.2f}+{w2:.1f}×{eff_val:.2f}={score:.2f})"
             memory_lines.append(line)
 
         memories_str = "\n".join(memory_lines)
         output = format_template.format(memories=memories_str)
 
         # Trim if too long
-        max_len = recall_cfg.get("max_context_length", 2000)
-        if len(output) > max_len:
-            output = output[:max_len] + "\n...(记忆已截断)"
+        if len(output) > max_context_length:
+            output = output[:max_context_length] + "\n...(记忆已截断)"
 
         return output
 
@@ -134,4 +180,3 @@ if __name__ == "__main__":
     os.makedirs(tmp_dir, exist_ok=True)
     with open(os.path.join(tmp_dir, "recall.log"), "wt") as f:
         print(result, file=f)
-    

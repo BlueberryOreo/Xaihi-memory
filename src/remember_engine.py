@@ -167,7 +167,17 @@ def calc_effective_importance(
 
 
 def decay_all() -> int:
-    """Scan all hot memories and update importance using current decay."""
+    """Update effective importance for all hot memories based on the
+    Ebbinghaus forgetting curve.
+
+    This is a *safety net*: recall() only updates memories that happen
+    to be retrieved, so long-unaccessed memories would otherwise keep
+    their stale importance forever.  SessionStart/SessionEnd call this
+    once per session to keep everything in sync.
+
+    Does *not* modify access_count — that is handled exclusively by
+    recall().  Only the time-based decay component is recalculated.
+    """
     all_memories = chroma_client.get_all()
     now = datetime.now(timezone.utc)
     updated = 0
@@ -182,7 +192,8 @@ def decay_all() -> int:
             float(base), int(access_count), str(created_at), now
         )
 
-        if effective != meta.get("importance", -1):
+        old_imp = meta.get("importance")
+        if old_imp is None or abs(effective - old_imp) > 1e-6:
             chroma_client.update_metadata(mem["id"], {"importance": effective})
             updated += 1
 
