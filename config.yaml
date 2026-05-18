@@ -11,10 +11,8 @@ embedding:
   # base_url: Read from bashrc or set directly
 
 llm:
-  # provider: "qwen"
-  # model: "Qwen3.6-35B-A3B-UD-Q8_K_XL.gguf"
-  provider: "zai"
-  model: "GLM-5.1(nsfw)"
+  # provider: "your_provider_here"
+  # model: "your_model_here"
   # api_key_env: "OPENAI_API_KEY"
   # api_key: Read from bashrc or set directly
   # base_url: Read from bashrc or set directly
@@ -61,7 +59,7 @@ recall:
   max_context_length: 2000
   top_k: 5                  # final recalled memories count
   top_candidates: 20        # vector search candidate window
-  min_similarity: 0.65      # minimum cosine similarity threshold
+  min_similarity: 0.60      # minimum cosine similarity threshold
   weight_similarity: 0.6    # w1: similarity weight in recall_score
   weight_importance: 0.4    # w2: importance weight in recall_score
   format_template: |

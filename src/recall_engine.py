@@ -81,9 +81,9 @@ def recall(query: str) -> str:
             return ""
 
         # Step 2: Similarity threshold filtering
-        max_cos = candidates[0]["cosine"]  # Already sorted by chroma
-        if max_cos < min_similarity:
-            return ""  # No memories pass the threshold
+        # Quick check: if the best candidate already fails, discard everything
+        if candidates[0]["cosine"] < min_similarity:
+            return ""
 
         # Step 3: Calculate recall_score and re-rank
         from datetime import timezone
@@ -103,8 +103,17 @@ def recall(query: str) -> str:
         # Sort by recall_score descending
         candidates.sort(key=lambda x: x["recall_score"], reverse=True)
 
-        # Take top_k
-        results = candidates[:top_k]
+        # Per-memory cosine filter + take top_k
+        results = []
+        for c in candidates:
+            if c["cosine"] < min_similarity:
+                break  # Already sorted by recall_score, lower scores will also fail
+            results.append(c)
+            if len(results) >= top_k:
+                break
+
+        if not results:
+            return ""
 
         # Step 4: Update access_count and importance only for passed memories
         for result in results:
