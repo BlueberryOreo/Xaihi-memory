@@ -8,8 +8,8 @@ embedding:
   dimension: 512
 
 llm:
-  # provider: "zai"
-  # model: "GLM-5.1(nsfw)"
+  # provider: "placeholder"
+  # model: "placeholder"
   # api_key: YOUR_API_KEY_HERE
   # base_url: YOUR_BASE_URL_HERE
   # temperature: 0.3
