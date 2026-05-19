@@ -10,12 +10,12 @@ from pathlib import Path
 
 try:
     from .config import config
-    from .embedding import get_embedding_client
+    from .embedding import embed
     from .llm_summarizer import get_llm_summarizer
     from .chroma_client import chroma_client
 except ImportError:
     from config import config
-    from embedding import get_embedding_client
+    from embedding import embed
     from llm_summarizer import get_llm_summarizer
     from chroma_client import chroma_client
 
@@ -371,7 +371,7 @@ def settle_daily_to_monthly() -> int:
             )
 
         merged_text = merged.get("summary", "")
-        embedding = get_embedding_client().embed(merged_text)
+        embedding = embed(merged_text)
 
         # Build metadata for monthly entry
         parent_ids = [c["id"] for c in low_eff]
@@ -472,7 +472,7 @@ def settle_monthly_to_yearly() -> int:
             )
 
         merged_text = merged.get("summary", "")
-        embedding = get_embedding_client().embed(merged_text)
+        embedding = embed(merged_text)
 
         parent_ids = [c["id"] for c in low_eff]
         year_meta = {
@@ -533,7 +533,7 @@ def summarize_and_store() -> bool:
 
         # Generate embedding for the summary
         summary_text = result.get("summary", "")
-        embedding = get_embedding_client().embed(summary_text)
+        embedding = embed(summary_text)
 
         # Generate session ID
         first_entry = entries[0]
@@ -658,7 +658,7 @@ def manual_remember(conversation: str) -> bool:
     try:
         result = get_llm_summarizer().summarize(conversation)
         summary_text = result.get("summary", "")
-        embedding = get_embedding_client().embed(summary_text)
+        embedding = embed(summary_text)
 
         session_id = f"manual-{datetime.now(timezone.utc).isoformat()[:10]}-{uuid.uuid4().hex[:8]}"
         created_at = datetime.now(timezone.utc).isoformat()

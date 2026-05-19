@@ -8,12 +8,12 @@ from typing import Any
 
 try:
     from .config import config
-    from .embedding import get_embedding_client
+    from .embedding import embed
     from .chroma_client import chroma_client
     from .remember_engine import calc_effective_importance
 except ImportError:
     from config import config
-    from embedding import get_embedding_client
+    from embedding import embed
     from chroma_client import chroma_client
     from remember_engine import calc_effective_importance
 
@@ -61,7 +61,7 @@ def recall(query: str) -> str:
 
     try:
         # Generate embedding for the query
-        query_embedding = get_embedding_client().embed(query)
+        query_embedding = embed(query)
 
         # Get config
         recall_cfg = config.get_recall()
@@ -103,9 +103,9 @@ def recall(query: str) -> str:
         for c in candidates:
             if c["recall_score"] < min_recall_score:
                 break  # Already sorted by recall_score, lower scores will also fail
-            # Also require cosine >= 0.60 to prevent high-importance but semantically
+            # Also require cosine >= 0.58 to prevent high-importance but semantically
             # unrelated memories from slipping through (e.g., random greetings)
-            if c["cosine"] < 0.60:
+            if c["cosine"] < 0.58:
                 continue
             results.append(c)
             if len(results) >= top_k:

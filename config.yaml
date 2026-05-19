@@ -3,21 +3,16 @@ chroma:
   collection: "memories"
 
 embedding:
-  provider: "openai"
-  model: "text-embedding-v4"
-  api_key_env: "OPENAI_API_KEY"
-  # api_key: Read from bashrc or set directly
-  dimension: 1024
-  # base_url: Read from bashrc or set directly
+  provider: "local"
+  # ONNX model: ~/.claude/models/bge-small-zh-v1.5-onnx/
+  dimension: 512
 
 llm:
-  # provider: "your_provider_here"
-  # model: "your_model_here"
-  # api_key_env: "OPENAI_API_KEY"
-  # api_key: Read from bashrc or set directly
-  # base_url: Read from bashrc or set directly
-  # base_url: https://127.0.0.1:8082/v1
-  temperature: 0.3
+  # provider: "zai"
+  # model: "GLM-5.1(nsfw)"
+  # api_key: YOUR_API_KEY_HERE
+  # base_url: YOUR_BASE_URL_HERE
+  # temperature: 0.3
 
 memory:
   top_k: 5
@@ -59,7 +54,7 @@ recall:
   max_context_length: 2000
   top_k: 5                  # final recalled memories count
   top_candidates: 20        # vector search candidate window
-  min_recall_score: 0.61    # minimum recall_score (w1×cos + w2×eff) threshold
+  min_recall_score: 0.55    # minimum recall_score (w1×cos + w2×eff) threshold
   weight_similarity: 0.6    # w1: similarity weight in recall_score
   weight_importance: 0.4    # w2: importance weight in recall_score
   format_template: |
